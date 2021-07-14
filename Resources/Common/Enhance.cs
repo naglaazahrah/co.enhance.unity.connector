@@ -552,6 +552,32 @@ public class Enhance
         FGLiOSInternals.ServiceTermsOptOut();
 #endif
     }
+  
+    /*
+      Request App Tracking authorization on iOS using Apple's App Tracking Transparency API. A callback
+      action is triggered based on whether the user approves or rejects tracking
+    */
+    static public void RequestAppTrackingTransparencyAuthorization(Action onApproved, Action onRejected)
+    {
+        Enhance.InitializeEnhance();
+
+        if (GameObject.Find(FGLEnhance_Callbacks.CallbackObjectName) == null)
+        {
+            string newName = "__FGLEnhance_Callback_" + UnityEngine.Random.Range(0, int.MaxValue);
+            GameObject callbackObject = new GameObject(newName);
+            callbackObject.AddComponent<FGLEnhance_Callbacks>();
+        }
+
+        FGLEnhance_Callbacks.OnAttApprovedCallback = onApproved;
+        FGLEnhance_Callbacks.OnAttRejectedCallback = onRejected;
+#if UNITY_EDITOR
+        if(onApproved != null) onApproved();
+#elif UNITY_ANDROID
+        if(onApproved != null) onApproved();
+#elif UNITY_IOS
+        FGLiOSInternals.RequestAppTrackingTransparencyAuthorization(FGLEnhance_Callbacks.CallbackObjectName);
+#endif
+    }
 
 	/**
 	* Log custom analytics event

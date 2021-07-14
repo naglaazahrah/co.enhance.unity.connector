@@ -377,6 +377,10 @@ private void OnPurchaseFailed() {
     // Failure
 }
 
+private void OnPurchasePending() {
+    // purchase is pending
+}
+
 if (Enhance.Purchases.IsSupported()) {
     Enhance.Purchases.AttemptPurchase("my_product", OnPurchaseSuccess, OnPurchaseFailed);
 }
@@ -393,7 +397,8 @@ Returns true if purchasing is available, false otherwise.
 void Enhance.Purchases.AttemptPurchase(
     string productName,
     Action onPurchaseSuccessCallback,
-    Action onPurchaseFailedCallback
+    Action onPurchaseFailedCallback,
+    Action onPurchasePendingCallback
 )
 
 Start the purchase flow for the given product.
@@ -424,6 +429,15 @@ Returns true if the item is owned, false otherwise.
 
 
 int Enhance.Purchases.GetOwnedItemCount(
+    string productName
+)
+
+Check if the given product has pending status. The pending status means that user has completed the purchase transaction but it's not yet finalized - for instance, because of slow credit card or choosen cash payment method.
+Product name is the reference name which you entered during the Enhance flow.
+Returns true if the item has pending status, false otherwise.
+
+
+int Enhance.Purchases.IsProductStatusPending(
     string productName
 )
 

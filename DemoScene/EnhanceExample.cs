@@ -19,6 +19,7 @@ public class EnhanceExample : MonoBehaviour
 
 		Enhance.SetReceivedCurrencyCallback (onCurrencyReceived);
 		UpdateIAPLabel ();
+		SetIapProductSku("Extra10Gems");
 	}
 
 	// Interstitial Ad
@@ -179,14 +180,16 @@ public class EnhanceExample : MonoBehaviour
 	// In App Purchases 
 
 	public void OnPurchaseItem() {
-		writeLog ("Attempting purchase for Enhance_SKU_One");
-		Enhance.Purchases.AttemptPurchase ("Enhance_SKU_One", onPurchaseSuccess, onPurchaseFailed);
+		string sku = GetIapProductSku();
+		//Enhance_SKU_One
+		writeLog ("Attempting purchase for "+sku);
+		Enhance.Purchases.AttemptPurchase (sku, onPurchaseSuccess, onPurchaseFailed, onPurchasePending);
 	}
 
 	public void OnConsumeItem() {
-		writeLog ("Attempting consume for Enhance_SKU_One");
-
-		Enhance.Purchases.Consume ("Enhance_SKU_One", onConsumeSuccess, onConsumeFailed);
+		string sku = GetIapProductSku();
+		writeLog ("Attempting consume for "+sku);
+		Enhance.Purchases.Consume (sku, onConsumeSuccess, onConsumeFailed);
 	}
 
 	// GDPR
@@ -216,6 +219,30 @@ public class EnhanceExample : MonoBehaviour
 	private void OnDialogComplete() {
 		writeLog("Finished displaying opt-in dialogs");
 	}
+  
+    /*
+        Example code to handle App Tracking Transparency on iOS
+        
+        Provide both callbacks, even if you do not care about the results. You can resume
+        your app using the callback functions.
+    */
+    public void OnRequestAppTrackingTransparencyAuthorization() {
+		Enhance.RequestAppTrackingTransparencyAuthorization(OnAttApproved, OnAttRejected);
+	}
+  
+    /*
+        Callback for if the user approves tracking
+    */ 
+    private void OnAttApproved() {
+        writeLog("iOS ATT Approved");
+    }
+  
+    /*
+        Callback for if the user rejects tracking
+    */ 
+    private void OnAttRejected() {
+        writeLog("iOS ATT Rejected");
+    }
 
 	// Permission callbacks
 
@@ -241,6 +268,12 @@ public class EnhanceExample : MonoBehaviour
 
 	private void onPurchaseFailed() {
 		writeLog ("Purchase failed");
+		UpdateIAPLabel ();
+	}
+
+	private void onPurchasePending() {
+		writeLog ("Purchase pending");
+		UpdateIAPLabel ();
 	}
 
 	// Consume Callback
@@ -251,13 +284,26 @@ public class EnhanceExample : MonoBehaviour
 
 	private void onConsumeFailed() {
 		writeLog ("Consume failed");
+		UpdateIAPLabel ();
 	}
 
 	private void UpdateIAPLabel() {
 		Text logText = GameObject.Find("UI Canvas/IAP Text").GetComponent<UnityEngine.UI.Text>();
+		string sku = GetIapProductSku();
 		//Enhance.Purchases.GetDisplayTitle("Enhance_SKU_One", "Default Title") + " - " +
-		logText.text =  Enhance.Purchases.GetDisplayPrice("Enhance_SKU_One", "Default Price") +  " - Qty: " +  Enhance.Purchases.GetOwnedItemCount("Enhance_SKU_One");
+		logText.text =  Enhance.Purchases.GetDisplayPrice(sku, "Default Price") +  " - Qty: " +  Enhance.Purchases.GetOwnedItemCount(sku) + " - isPending: " + Enhance.Purchases.IsProductStatusPending(sku);
 	}
+
+	private string GetIapProductSku(){
+		InputField tf = GameObject.Find("UI Canvas/InappSkuTF").GetComponent<InputField>();
+		return tf.text;
+	}
+
+	private void SetIapProductSku( string sku ){
+		InputField tf = GameObject.Find("UI Canvas/InappSkuTF").GetComponent<InputField>();
+		tf.text = sku;
+	}
+	
 
     // Non-enhance logic
 	// Show logs on screen

@@ -16,9 +16,9 @@ public class FglEnhanceInAppPurchases
 		return Enhance.Purchases.IsSupported ();
     }
 
-    public static void AttemptPurchase(string sku, Action onPurchaseSuccessCallback, Action onPurchaseFailedCallback)
+    public static void AttemptPurchase(string sku, Action onPurchaseSuccessCallback, Action onPurchaseFailedCallback, Action OnPurchasePendingCallback)
     {
-		Enhance.Purchases.AttemptPurchase (sku, onPurchaseSuccessCallback, onPurchaseFailedCallback);
+		Enhance.Purchases.AttemptPurchase (sku, onPurchaseSuccessCallback, onPurchaseFailedCallback, OnPurchasePendingCallback);
     }
 
     public static void ConsumePurchase(string sku, Action onConsumeSuccessCallback, Action onConsumeFailedCallback)
@@ -34,6 +34,11 @@ public class FglEnhanceInAppPurchases
     public static bool IsItemOwned(string sku)
     {
 		return Enhance.Purchases.IsItemOwned (sku);
+    }
+
+    public static bool IsProductStatusPending(string sku)
+    {
+		return Enhance.Purchases.IsProductStatusPending (sku);
     }
 
     public static bool IsRestoringNeeded()

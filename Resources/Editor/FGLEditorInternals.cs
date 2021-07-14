@@ -150,6 +150,11 @@ namespace FGL.Enhance.Internals
             return false;
         }
 
+        public static bool IsProductStatusPending(string sku)
+        {
+            return false;
+        }
+
 		public static int GetOwnedItemCount(string sku)
 		{
 			return 0;

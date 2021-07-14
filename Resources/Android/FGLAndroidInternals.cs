@@ -167,6 +167,12 @@ namespace FGL.Enhance.Internals
             return adConnectorClass.CallStatic<bool>("isPurchaseItemOwned", sku);
         }
 
+        public static bool IsProductStatusPending(string sku)
+        {
+            AndroidJavaClass adConnectorClass = new AndroidJavaClass("com.fgl.enhance.unityconnector.FGLUnityConnector");
+            return adConnectorClass.CallStatic<bool>("isProductStatusPending", sku);
+        }
+
 		public static int GetOwnedItemCount(string sku)
 		{
 			AndroidJavaClass adConnectorClass = new AndroidJavaClass ("com.fgl.enhance.unityconnector.FGLUnityConnector");
