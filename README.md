@@ -1,4 +1,4 @@
-# Enhance Drag & Drop Library by Enhance, Inc.
+# Enhance Drag & Drop Library
 # https://enhance.co/documentation
 # 
 # UNITY
