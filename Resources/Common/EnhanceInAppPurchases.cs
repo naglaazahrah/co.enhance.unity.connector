@@ -25,7 +25,7 @@ public class EnhanceInAppPurchases
 #endif
     }
 
-    private static void _AttemptPurchase(string sku, Action onPurchaseSuccessCallback, Action onPurchaseFailedCallback)
+    private static void _AttemptPurchase(string sku, Action onPurchaseSuccessCallback, Action onPurchaseFailedCallback, Action OnPurchasePendingCallback)
     {
         if (GameObject.Find(FGLEnhance_Callbacks.CallbackObjectName) == null)
         {
@@ -36,6 +36,7 @@ public class EnhanceInAppPurchases
 
         FGLEnhance_Callbacks.OnPurchaseSuccessCallback = onPurchaseSuccessCallback;
         FGLEnhance_Callbacks.OnPurchaseFailedCallback = onPurchaseFailedCallback;
+        FGLEnhance_Callbacks.OnPurchasePendingCallback = OnPurchasePendingCallback;
 
         Enhance.InitializeEnhance();
 #if UNITY_EDITOR
@@ -99,6 +100,21 @@ public class EnhanceInAppPurchases
 #endif
     }
 
+    private static bool _IsProductStatusPending(string sku)
+    {
+        Enhance.InitializeEnhance();
+
+#if UNITY_EDITOR
+        return FGLEditorInternals.IsProductStatusPending(sku);
+#elif UNITY_ANDROID
+        return FGLAndroidInternals.IsProductStatusPending(sku);
+#elif UNITY_IOS
+        return false; //iOS doesn't need pending transations
+#else
+        return false;
+#endif
+    }
+
 	private static int _GetOwnedItemCount(string sku)
 	{
 		Enhance.InitializeEnhance ();
@@ -144,8 +160,6 @@ public class EnhanceInAppPurchases
 		return FGLAndroidInternals.GetDisplayTitle(sku, defaultTitle);
 #elif UNITY_IOS
 		return FGLiOSInternals.GetDisplayTitle(sku, defaultTitle);
-#else
-		return null;
 #endif
 	}
 
@@ -159,8 +173,6 @@ public class EnhanceInAppPurchases
 		return FGLAndroidInternals.GetDisplayDescription(sku, defaultDescription);
 #elif UNITY_IOS
 		return FGLiOSInternals.GetDisplayDescription(sku, defaultDescription);
-#else
-		return null;
 #endif
 	}
 
@@ -169,9 +181,9 @@ public class EnhanceInAppPurchases
 		return _IsSupported ();
 	}
 
-	public void AttemptPurchase(string sku, Action onPurchaseSuccessCallback, Action onPurchaseFailedCallback)
+	public void AttemptPurchase(string sku, Action onPurchaseSuccessCallback, Action onPurchaseFailedCallback, Action OnPurchasePendingCallback)
 	{
-		_AttemptPurchase (sku, onPurchaseSuccessCallback, onPurchaseFailedCallback);
+		_AttemptPurchase (sku, onPurchaseSuccessCallback, onPurchaseFailedCallback, OnPurchasePendingCallback);
 	}
 
 	public void Consume(string sku, Action onConsumeSuccessCallback, Action onConsumeFailedCallback)
@@ -187,6 +199,11 @@ public class EnhanceInAppPurchases
 	public bool IsItemOwned(string sku)
 	{
 		return _IsItemOwned (sku);
+	}
+
+	public bool IsProductStatusPending(string sku)
+	{
+		return _IsProductStatusPending (sku);
 	}
 
 	public int GetOwnedItemCount(string sku)
