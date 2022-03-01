@@ -36,6 +36,7 @@ public class FGLEnhance_Callbacks : MonoBehaviour
     public static Action<string, string, string> OnUnavailableCallback = null;
     public static Action<string, string, string> OnFailedToShowCallback = null;
     public static Action<string, string, string> OnLoadingCallback = null;
+    public static Action<string, string, Dictionary<string,string>> OnEnhanceDataCallback = null;
 
     void Awake()
     {
@@ -198,7 +199,7 @@ public class FGLEnhance_Callbacks : MonoBehaviour
         Debug.Log("[Enhance] EnhanceOnDialogComplete");
         if(OnDialogCompleteCallback != null) OnDialogCompleteCallback();
     }
-  
+
       public void EnhanceOnAppTrackingApproved(string empty)
     {
         Debug.Log("[Enhance] EnhanceOnAppTrackingApproved");
@@ -273,4 +274,36 @@ public class FGLEnhance_Callbacks : MonoBehaviour
        if (OnLoadingCallback != null)
            OnLoadingCallback(parameters[0], parameters[1], parameters[2]);
    }
+
+   public void EnhanceOnEnhanceData(string paramsString)
+   {
+       Debug.Log("[Enhance] EnhanceOnEnhanceData");
+       string[] parameters = paramsString.Split(new string[] { "{;;}" }, StringSplitOptions.None);
+
+        var json = JsonUtility.FromJson<JsonContainer>(parameters[2]);
+		var dict = json.ToDictionary();
+
+       if (OnEnhanceDataCallback != null) {
+           OnEnhanceDataCallback(parameters[0], parameters[1], dict);
+       }
+   }
+}
+
+[Serializable]
+public struct JsonContainer {
+	public KeyValue[] items;
+
+	public Dictionary<string, string> ToDictionary() {
+		var dict = new Dictionary<string, string>();
+		for (int i = 0; i < items.Length; i++) {
+			dict.Add(items[i].key, items[i].value);
+		}
+		return dict;
+	}
+}
+
+[Serializable]
+public struct KeyValue {
+    public string key;
+    public string value;
 }

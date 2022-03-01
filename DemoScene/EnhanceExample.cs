@@ -13,11 +13,12 @@ public class EnhanceExample : MonoBehaviour
 
 		if (!_hasLocalNotificationPermission)
 			Enhance.RequestLocalNotificationPermission (OnPermissionGranted, OnPermissionRefused);
-    
+
 		// Set currency callback (offerwalls)
 		// It is important to do in the beginning of the application's logic
 
 		Enhance.SetReceivedCurrencyCallback (onCurrencyReceived);
+		Enhance.SetOnEnhanceDataCallback(onEnhanceData);
 		UpdateIAPLabel ();
 		SetIapProductSku("Extra10Gems");
 	}
@@ -37,11 +38,11 @@ public class EnhanceExample : MonoBehaviour
 		Enhance.ShowInterstitialAd();
 		writeLog ("Showing interstitial ad");
     }
-		
+
 	// Rewarded Ad
 
     public void OnShowRewardedAd() {
-		// Check whether a rewarded ad is ready 
+		// Check whether a rewarded ad is ready
 
 		if (!Enhance.IsRewardedAdReady()) {
 			writeLog("Rewarded ad is not ready");
@@ -79,7 +80,7 @@ public class EnhanceExample : MonoBehaviour
 	}
 
 	// Banner Ad
-		
+
     public void OnToggleBannerAd() {
 		// Hide a banner ad if it's already visible
 
@@ -100,7 +101,7 @@ public class EnhanceExample : MonoBehaviour
 		// The ad is available, display it
 
 		Enhance.ShowBannerAdWithPosition(Enhance.Position.BOTTOM);
-		_isBannerAdShown = true; 
+		_isBannerAdShown = true;
 		writeLog ("Showing banner ad");
 
 		// This will show our ad at the bottom of the screen
@@ -114,7 +115,7 @@ public class EnhanceExample : MonoBehaviour
 
 		// Simple event:
         Enhance.LogEvent("event_type");
-	
+
 		// Event with an additional parameter:
 		Enhance.LogEvent("event_type", "event_param_key", "event_param_value");
 
@@ -177,7 +178,7 @@ public class EnhanceExample : MonoBehaviour
 		writeLog ("Disabled local notification");
 	}
 
-	// In App Purchases 
+	// In App Purchases
 
 	public void OnPurchaseItem() {
 		string sku = GetIapProductSku();
@@ -219,27 +220,27 @@ public class EnhanceExample : MonoBehaviour
 	private void OnDialogComplete() {
 		writeLog("Finished displaying opt-in dialogs");
 	}
-  
+
     /*
         Example code to handle App Tracking Transparency on iOS
-        
+
         Provide both callbacks, even if you do not care about the results. You can resume
         your app using the callback functions.
     */
     public void OnRequestAppTrackingTransparencyAuthorization() {
 		Enhance.RequestAppTrackingTransparencyAuthorization(OnAttApproved, OnAttRejected);
 	}
-  
+
     /*
         Callback for if the user approves tracking
-    */ 
+    */
     private void OnAttApproved() {
         writeLog("iOS ATT Approved");
     }
-  
+
     /*
         Callback for if the user rejects tracking
-    */ 
+    */
     private void OnAttRejected() {
         writeLog("iOS ATT Rejected");
     }
@@ -258,6 +259,13 @@ public class EnhanceExample : MonoBehaviour
 
 	private void onCurrencyReceived(int amount) {
 		writeLog ("Currency received: " + amount);
+	}
+
+	private void onEnhanceData(string sdkId, string paramName, Dictionary<string,string> dataMap) {
+		writeLog ("Enhance Data received [sdkId:" + sdkId + ", paramName: " + paramName+", dataMapLength: " + dataMap.Count + "]");
+		foreach( KeyValuePair<string, string> kvp in dataMap ) {
+			writeLog ("    -> Key = " + kvp.Key + ", Value = " + kvp.Value);
+		}
 	}
 
 	// Purchase Callback
@@ -303,7 +311,7 @@ public class EnhanceExample : MonoBehaviour
 		InputField tf = GameObject.Find("UI Canvas/InappSkuTF").GetComponent<InputField>();
 		tf.text = sku;
 	}
-	
+
 
     // Non-enhance logic
 	// Show logs on screen
@@ -314,7 +322,7 @@ public class EnhanceExample : MonoBehaviour
 		Text logText = GameObject.Find("UI Canvas/Log Output/Log Text").GetComponent<UnityEngine.UI.Text>();
 
 		if (_lines == 6) {
-			_lines = 0;	
+			_lines = 0;
 			logText.text = "";
 		}
 

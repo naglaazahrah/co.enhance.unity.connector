@@ -10,7 +10,7 @@ namespace FGL.Enhance.Internals
         public static void Initialize()
         {
         }
-        
+
         public static void SetCurrencyCallback(string bridgeObjectName)
         {
             AndroidJavaClass adConnectorClass = new AndroidJavaClass("com.fgl.enhance.unityconnector.FGLUnityConnector");
@@ -57,7 +57,7 @@ namespace FGL.Enhance.Internals
 		{
 			AndroidJavaClass adConnectorClass = new AndroidJavaClass("com.fgl.enhance.unityconnector.FGLUnityConnector");
 			adConnectorClass.CallStatic("showBannerAd", placement, position);
-		} 
+		}
 
 		public static void HideBannerAd()
 		{
@@ -305,6 +305,12 @@ namespace FGL.Enhance.Internals
 		{
 			AndroidJavaClass adConnectorClass = new AndroidJavaClass("com.fgl.enhance.unityconnector.FGLUnityConnector");
 			adConnectorClass.CallStatic("setOnLoadingCallback", bridgeObjectName);
+        }
+
+        public static void SetOnEnhanceDataCallback(string bridgeObjectName)
+		{
+			AndroidJavaClass adConnectorClass = new AndroidJavaClass("com.fgl.enhance.unityconnector.FGLUnityConnector");
+			adConnectorClass.CallStatic("setOnEnhanceDataCallback", bridgeObjectName);
         }
     }
 }

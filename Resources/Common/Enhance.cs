@@ -42,7 +42,7 @@ public class Enhance
 
     /**
       * Set currency received callback
-      * 
+      *
       * @param onCurrencyReceived callback executed when a currency is received
       */
 	public static void SetReceivedCurrencyCallback(Action<int> onCurrencyReceived)
@@ -68,7 +68,7 @@ public class Enhance
 
     /**
      * Check if an interstitial ad is ready
-     * 
+     *
      * @return true if an interstitial ad is ready, false if not
      */
     public static bool IsInterstitialReady(string placement = INTERSTITIAL_PLACEMENT_DEFAULT)
@@ -104,7 +104,7 @@ public class Enhance
 
     /**
      * Check if a rewarded ad is ready
-     * 
+     *
      * @return true if a rewarded ad is ready, false if not
      */
     public static bool IsRewardedAdReady(string placement = REWARDED_PLACEMENT_NEUTRAL)
@@ -124,7 +124,7 @@ public class Enhance
 
     /**
       * Show rewarded ad
-      * 
+      *
       * @param placement placement type for this ad
       * @param onRewardGrantedCallback callback executed when the ad reward is granted
       * @param onRewardDeclinedCallback callback executed when the ad reward is declined
@@ -154,9 +154,9 @@ public class Enhance
     }
 
 	/**
-	  * Show rewarded ad 
+	  * Show rewarded ad
 	  */
-	
+
 	public static void ShowRewardedAd(Action<RewardType, int> onRewardGrantedCallback, Action onRewardDeclinedCallback, Action onRewardUnavailableCallback)
 	{
 		ShowRewardedAd (REWARDED_PLACEMENT_NEUTRAL, onRewardGrantedCallback, onRewardDeclinedCallback, onRewardUnavailableCallback);
@@ -193,7 +193,7 @@ public class Enhance
 
     /**
     * Show banner ad
-    * 
+    *
     * @param position position (top or bottom)
     */
     public static void ShowBannerAdWithPosition (Position position)
@@ -203,7 +203,7 @@ public class Enhance
 
 	/**
 	* Show banner ad
-	* 
+	*
 	* @param position position (top or bottom)
 	*/
 	public static void ShowBannerAdWithPosition (string placement, Position position)
@@ -345,7 +345,7 @@ public class Enhance
 
     /**
      * Log custom analytics event
-     * 
+     *
      * @param eventType event type (for instance 'menu_shown')
      */
     public static void LogEvent(string eventType)
@@ -363,7 +363,7 @@ public class Enhance
 
     /**
      * Log custom analytics event
-     * 
+     *
      * @param eventType event type (for instance 'level_completed')
      * @param paramKey parameter key (for instance 'level')
      * @param paramValue parameter value (for instance '3')
@@ -384,7 +384,7 @@ public class Enhance
 
     /**
      * Request permission from the user to show local notifications
-     * 
+     *
      * @param onPermissionGrantedCallback executed when the permission is granted
      * @param onPermissionRefusedCallback executed when the permission is refused
      */
@@ -552,7 +552,7 @@ public class Enhance
         FGLiOSInternals.ServiceTermsOptOut();
 #endif
     }
-  
+
     /*
       Request App Tracking authorization on iOS using Apple's App Tracking Transparency API. A callback
       action is triggered based on whether the user approves or rejects tracking
@@ -581,7 +581,7 @@ public class Enhance
 
 	/**
 	* Log custom analytics event
-	* 
+	*
 	* @param eventType event type (for instance 'level_completed')
 	* @param paramKey parameter key (for instance 'level')
 	* @param paramValue parameter value (for instance '3')
@@ -601,7 +601,7 @@ public class Enhance
 
 	/**
 	* Set ad event on ready
-	* 
+	*
 	* @param onReady executed when an ad is ready
 	*/
 	public static void SetOnReadyCallback (Action<string, string, string> onReady)
@@ -626,7 +626,7 @@ public class Enhance
 
 	/**
 	* Set ad event on complete
-	* 
+	*
 	* @param onComplete executed when an ad is ready
 	*/
 	public static void SetOnCompleteCallback (Action<string, string, string> onComplete)
@@ -651,7 +651,7 @@ public class Enhance
 
 	/**
 	* Set ad event on clicked
-	* 
+	*
 	* @param onReady executed when an ad is clicked
 	*/
 	public static void SetOnClickedCallback (Action<string, string, string> onClicked)
@@ -676,7 +676,7 @@ public class Enhance
 
 	/**
 	* Set ad event for when an ad is showing
-	* 
+	*
 	* @param onReady executed when an ad is clicked
 	*/
 	public static void SetOnShowingCallback (Action<string, string, string> onShowing)
@@ -701,7 +701,7 @@ public class Enhance
 
 	/**
 	* Set ad event on unavailable
-    * 
+    *
 	* @param onReady executed when an ad is unavailable
 	*/
 	public static void SetOnUnavailableCallback (Action<string, string, string> onUnavailable)
@@ -726,7 +726,7 @@ public class Enhance
 
 	/**
 	* Set event for when an ad fails to show
-	* 
+	*
 	* @param onReady executed when an ad has failed to show
 	*/
 	public static void SetOnFailedToShowCallback (Action<string, string, string> onFailedToShow)
@@ -751,7 +751,7 @@ public class Enhance
 
 	/**
     * Set event for when an ad is loaded
-	* 
+	*
 	* @param onReady executed when an ad has loaded
 	*/
 	public static void SetOnLoadingCallback (Action<string, string, string> onLoading)
@@ -771,6 +771,32 @@ public class Enhance
 		FGLAndroidInternals.SetOnLoadingCallback(FGLEnhance_Callbacks.CallbackObjectName);
 #elif UNITY_IOS
 		FGLiOSInternals.SetOnLoadingCallback(FGLEnhance_Callbacks.CallbackObjectName);
+#endif
+	}
+
+
+    /**
+    * Set event for custom Enhance data
+    *
+    * @param onReady executed when an ad has loaded
+    */
+	public static void SetOnEnhanceDataCallback (Action<string, string, Dictionary<string,string>> onEnhanceData)
+	{
+		if (GameObject.Find (FGLEnhance_Callbacks.CallbackObjectName) == null) {
+			string newName = "__FGLEnhance_Callback_" + UnityEngine.Random.Range (0, int.MaxValue);
+			GameObject callbackObject = new GameObject (newName);
+			callbackObject.AddComponent<FGLEnhance_Callbacks> ();
+		}
+
+		FGLEnhance_Callbacks.OnEnhanceDataCallback = onEnhanceData;
+
+		InitializeEnhance ();
+#if UNITY_EDITOR
+
+#elif UNITY_ANDROID
+		FGLAndroidInternals.SetOnEnhanceDataCallback(FGLEnhance_Callbacks.CallbackObjectName);
+#elif UNITY_IOS
+
 #endif
 	}
 
